@@ -1,0 +1,5 @@
+playerName:      Name
+position:        Pos
+teamName:        Team
+playerId:        id
+fullLink:        link
