@@ -3,3 +3,9 @@ position:        Pos
 teamName:        Team
 playerId:        id
 fullLink:        link
+league:          league
+age:             age
+citizenship:     citizenship
+playerCost:      playerCost
+positionOnField: positionOnField
+contractExpires: contractExpires

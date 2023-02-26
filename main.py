@@ -12,15 +12,40 @@ from common_modules.my_remove import remove_file
 
 from functions.players import get_teams, get_players
 from functions.format import formatPosition
+from functions.addreq import add_html
+
+from bs4 import BeautifulSoup
 
 
 __author__ = 'Vadim Arsenev'
-__version__ = '1.0.0'
-__data__ = '25.02.2023'
+__version__ = '1.1.0'
+__data__ = '26.02.2023'
 
 
 ORDER = list(map(lambda x: x.split(':')[0].strip(), \
     read_txt(settings.COLUMNS).split('\n')))
+
+
+def addPlayerInfo(url):
+    html = add_html(url)
+    soup = BeautifulSoup(html, 'lxml')
+
+    box1 = soup.find_all('div', class_='data-header__club-info')
+    spans = box1[0].find_all('span')
+    league = spans[1].find('a').text.strip()
+    contractExpires = spans[7].text.strip()
+
+    box2 = soup.find_all('div', class_='data-header__details')
+    lis = box2[0].find_all('li')
+    age = lis[0].find('span').text.strip().split('(')[1][:-1]
+    citizenship = lis[2].find('span').text.strip()
+    positionOnField = lis[4].find('span').text.strip()
+
+    box3 = soup.find_all('div', class_='data-header__box--small')
+    playerCost = box3[0].find('a').text.strip().split(' ')[0]
+
+    return league, contractExpires, age, citizenship, \
+        positionOnField, playerCost
 
 
 def realPlayers(players, teamName):
@@ -38,6 +63,9 @@ def realPlayers(players, teamName):
         linkName = player['link'].split('/')[1]
         fullLink = f'https://www.transfermarkt.co.uk/{linkName}' \
             f'/leistungsdaten/spieler/{playerId}/saison/{settings.SEASON}/plus/1'
+        
+        league, contractExpires, age, citizenship, \
+        positionOnField, playerCost = addPlayerInfo(fullLink)
 
         # Data generation and writing to file
         data = {
@@ -46,6 +74,12 @@ def realPlayers(players, teamName):
             'position': position,
             'fullLink': fullLink,
             'teamName': teamName,
+            'league': league,
+            'contractExpires': contractExpires,
+            'age': age,
+            'citizenship': citizenship,
+            'positionOnField': positionOnField,
+            'playerCost': playerCost,
         }
 
         write_csv(settings.RESULT_FILE[0], data, ORDER)
