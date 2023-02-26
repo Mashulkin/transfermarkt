@@ -32,7 +32,10 @@ def addPlayerInfo(url):
 
     box1 = soup.find_all('div', class_='data-header__club-info')
     spans = box1[0].find_all('span')
-    league = spans[1].find('a').text.strip()
+    try:
+        league = spans[1].find('a').text.strip()
+    except IndexError:
+        league = ''
     contractExpires = spans[7].text.strip()
 
     box2 = soup.find_all('div', class_='data-header__details')
