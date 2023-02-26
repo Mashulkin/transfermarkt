@@ -42,7 +42,10 @@ def addPlayerInfo(url):
     positionOnField = lis[4].find('span').text.strip()
 
     box3 = soup.find_all('div', class_='data-header__box--small')
-    playerCost = box3[0].find('a').text.strip().split(' ')[0]
+    try:
+        playerCost = box3[0].find('a').text.strip().split(' ')[0]
+    except IndexError:
+        playerCost = ''
 
     return league, contractExpires, age, citizenship, \
         positionOnField, playerCost
