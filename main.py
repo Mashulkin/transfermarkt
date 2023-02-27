@@ -15,11 +15,13 @@ from functions.format import formatPosition
 from functions.addreq import add_html
 
 from bs4 import BeautifulSoup
+from time import sleep
+from random import randint
 
 
 __author__ = 'Vadim Arsenev'
-__version__ = '1.1.0'
-__data__ = '26.02.2023'
+__version__ = '1.2.0'
+__data__ = '27.02.2023'
 
 
 ORDER = list(map(lambda x: x.split(':')[0].strip(), \
@@ -27,6 +29,7 @@ ORDER = list(map(lambda x: x.split(':')[0].strip(), \
 
 
 def addPlayerInfo(url):
+    sleep(randint(1,10))
     html = add_html(url)
     soup = BeautifulSoup(html, 'lxml')
 
@@ -34,15 +37,21 @@ def addPlayerInfo(url):
     spans = box1[0].find_all('span')
     try:
         league = spans[1].find('a').text.strip()
-    except IndexError:
+    except:
         league = ''
-    contractExpires = spans[7].text.strip()
+    try:
+        contractExpires = spans[7].text.strip()
+    except:
+        contractExpires = ''
 
     box2 = soup.find_all('div', class_='data-header__details')
     lis = box2[0].find_all('li')
     age = lis[0].find('span').text.strip().split('(')[1][:-1]
     citizenship = lis[2].find('span').text.strip()
-    positionOnField = lis[4].find('span').text.strip()
+    try:
+        positionOnField = lis[4].find('span').text.strip()
+    except:
+        positionOnField = ''
 
     box3 = soup.find_all('div', class_='data-header__box--small')
     try:
